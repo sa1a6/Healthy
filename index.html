@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>حاسبة الوزن الصحي</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(to bottom right, #f8f1e7, #e3d5c0);
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fffaf3;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e0d3b8;
+      position: relative;
+    }
+
+    h2 {
+      font-weight: 600;
+      color: #6d4c41;
+      margin-bottom: 20px;
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid #d7c1a8;
+      background-color: #fefcf8;
+    }
+
+    .btn-primary {
+      background-color: #a67c52;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #8d6744;
+    }
+
+    .btn-warning {
+      background-color: #d4af7f;
+      border: none;
+      color: #fff;
+    }
+
+    .btn-warning:hover {
+      background-color: #b8956b;
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: #6d4c41;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #result {
+      color: #4e342e;
+      font-size: 18px;
+      margin-top: 20px;
+      border-top: 1px dashed #c8b7a6;
+      padding-top: 15px;
+      min-height: 90px;
+    }
+
+    /* BMI Chart Styles */
+    .bmi-chart-container {
+      margin-top: 30px;
+    }
+
+    .bmi-bar {
+      height: 40px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .bmi-indicator {
+      position: absolute;
+      top: -10px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 15px solid #333;
+      left: 0;
+      transition: left 0.5s ease-in-out;
+      display: none; /* مخفي افتراضياً */
+    }
+
+    #emoji {
+      font-size: 2rem;
+      margin-top: 10px;
+      min-height: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- زر تبديل اللغة -->
+  <button class="btn lang-switch" onclick="toggleLanguage()">English</button>
+
+  <!-- النموذج -->
+  <div class="container text-center">
+    <h2 id="title">حاسبة الوزن الصحي</h2>
+    <form id="bmiForm" onsubmit="return false;">
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          placeholder="ادخل اسمك"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="age"
+          placeholder="العمر"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <select class="form-select" id="gender" required>
+          <option value="" disabled selected>اختر الجنس</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="height"
+          placeholder="الطول (سم)"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="weight"
+          placeholder="الوزن (كجم)"
+          required
+        />
+      </div>
+      <div class="d-flex justify-content-center gap-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="calculateBMI()"
+          id="calcBtn"
+        >
+          احسب
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning"
+          onclick="resetForm()"
+          id="resetBtn"
+        >
+          بيانات جديدة
+        </button>
+      </div>
+    </form>
+
+    <div id="result"></div>
+
+    <!-- BMI Chart -->
+    <div class="bmi-chart-container">
+      <h5 class="mb-2 mt-4" id="chartLabel">مخطط مؤشر كتلة الجسم (BMI)</h5>
+      <div class="bmi-bar">
+        <div
+          style="width: 18.5%; background-color: #64b5f6; height: 100%; float: left;"
+        ></div>
+        <div
+          style="width: 6.4%; background-color: #81c784; height: 100%; float: left;"
+        ></div>
+        <div
+          style="width: 5%; background-color: #ffb74d; height: 100%; float: left;"
+        ></div>
+        <div
+          style="width: 70.1%; background-color: #e57373; height: 100%; float: left;"
+        ></div>
+        <div id="bmiIndicator" class="bmi-indicator"></div>
+      </div>
+      <!-- Emoji -->
+      <div id="emoji"></div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    let currentLang = "ar";
+
+    const texts = {
+      ar: {
+        title: "حاسبة الوزن الصحي",
+        name: "ادخل اسمك",
+        age: "العمر",
+        gender: "اختر الجنس",
+        male: "ذكر",
+        female: "أنثى",
+        height: "الطول (سم)",
+        weight: "الوزن (كجم)",
+        calculate: "احسب",
+        reset: "بيانات جديدة",
+        chartLabel: "مخطط مؤشر كتلة الجسم (BMI)",
+        resultLabel: (name, age, gender, bmi, status) =>
+          `الاسم: ${name}<br>العمر: ${age}<br>الجنس: ${gender}<br>BMI: ${bmi}<br>الحالة: ${status}`,
+        statuses: {
+          under: "نقص في الوزن",
+          normal: "وزنك صحي ✅",
+          over: "زيادة في الوزن",
+          obese: "سمنة",
+        },
+        switchLang: "English",
+      },
+      en: {
+        title: "Healthy Weight Calculator",
+        name: "Enter your name",
+        age: "Age",
+        gender: "Select Gender",
+        male: "Male",
+        female: "Female",
+        height: "Height (cm)",
+        weight: "Weight (kg)",
+        calculate: "Calculate",
+        reset: "New Entry",
+        chartLabel: "BMI Chart",
+        resultLabel: (name, age, gender, bmi, status) =>
+          `Name: ${name}<br>Age: ${age}<br>Gender: ${gender}<br>BMI: ${bmi}<br>Status: ${status}`,
+        statuses: {
+          under: "Underweight",
+          normal: "Healthy weight ✅",
+          over: "Overweight",
+          obese: "Obese",
+        },
+        switchLang: "العربية",
+      },
+    };
+
+    function calculateBMI() {
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const gender = document.getElementById("gender").value;
+      const height = parseFloat(document.getElementById("height").value) / 100;
+      const weight = parseFloat(document.getElementById("weight").value);
+
+      if (!name || !age || !gender || !height || !weight) {
+        document.getElementById("result").innerHTML =
+          currentLang === "ar" ? "يرجى ملء جميع الحقول." : "Please fill all fields.";
+        return;
+      }
+
+      const bmi = (weight / (height * height)).toFixed(2);
+      let statusKey = "";
+
+      if (bmi < 18.5) statusKey = "under";
+      else if (bmi < 25) statusKey = "normal";
+      else if (bmi < 30) statusKey = "over";
+      else statusKey = "obese";
+
+      const lang = texts[currentLang];
+      const status = lang.statuses[statusKey];
+
+      document.getElementById("result").innerHTML = lang.resultLabel(
+        name,
+        age,
+        gender,
+        bmi,
+        status
+      );
+
+      // Emoji حسب الحالة
+      const emojiMap = {
+        under: "😟",
+        normal: "😊",
+        over: "😐",
+        obese: "😢",
+      };
+      document.getElementById("emoji").innerText = emojiMap[statusKey];
+
+      // حساب موقع المؤشر
+      const bmiValue = parseFloat(bmi);
+      let positionPercent = 0;
+
+      if (bmiValue < 18.5) {
+        positionPercent = (bmiValue / 18.5) * 18.5;
+      } else if (bmiValue < 25) {
+        positionPercent = 18.5 + ((bmiValue - 18.5) / (25 - 18.5)) * 6.4;
+      } else if (bmiValue < 30) {
+        positionPercent = 24.9 + ((bmiValue - 25) / (30 - 25)) * 5;
+      } else {
+        positionPercent = 30 + ((Math.min(bmiValue, 50) - 30) / (50 - 30)) * 70.1;
+      }
+
+      const indicator = document.getElementById("bmiIndicator");
+      indicator.style.left = `calc(${positionPercent}% - 10px)`;
+      indicator.style.display = "block"; // إظهار المؤشر بعد الحساب
+    }
+
+    function resetForm() {
+      document.getElementById("bmiForm").reset();
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("bmiIndicator").style.display = "none"; // إخفاء المؤشر
+      document.getElementById("emoji").innerText = "";
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === "ar" ? "en" : "ar";
+      updateLanguage();
+    }
+
+    function updateLanguage() {
+      const lang = texts[currentLang];
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
+
+      document.getElementById("title").innerText = lang.title;
+      document.getElementById("name").placeholder = lang.name;
+      document.getElementById("age").placeholder = lang.age;
+      const genderSelect = document.getElementById("gender");
+      genderSelect.options[0].text = lang.gender;
+      genderSelect.options[1].text = lang.male;
+      genderSelect.options[2].text = lang.female;
+      document.getElementById("height").placeholder = lang.height;
+      document.getElementById("weight").placeholder = lang.weight;
+      document.getElementById("calcBtn").innerText = lang.calculate;
+      document.getElementById("resetBtn").innerText = lang.reset;
+      document.querySelector(".lang-switch").innerText = lang.switchLang;
+      document.getElementById("chartLabel").innerText = lang.chartLabel;
+      resetForm();
+    }
+
+    // تهيئة اللغة عند التحميل
+    updateLanguage();
+  </script>
+</body>
+</html>
