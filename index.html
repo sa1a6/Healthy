@@ -8,73 +8,87 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
   
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+  <!-- Google Fonts: Noto Serif Arabic (أنيق للعربية) + Playfair Display (للإنجليزية) + Cairo كاحتياطي -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Arabic:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
 
   <style>
     :root{
-      --bg-1: #f7fbff;
-      --bg-2: #f3f7fb;
-      --card: rgba(255,255,255,0.98);
-      --accent: #0ea5a4;      /* teal */
-      --accent-2: #f59e0b;    /* amber */
-      --muted: #6b5a49;
+      /* أثري مع لمسات دافئة */
+      --bg-1: #f7efe1;
+      --bg-2: #efe6d1;
+      --card: rgba(255,250,243,0.98);
+      --accent: #8a5a2b;      /* brown */
+      --accent-2: #b77a2b;    /* warm amber */
+      --muted: #4b392f;
+      --paper-overlay: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="160" height="160" fill="%23efe6d1"/><g opacity="0.03" fill="%23000000"><path d="M0 0h160v1H0zM0 28h160v1H0zM0 56h160v1H0zM0 84h160v1H0zM0 112h160v1H0zM0 140h160v1H0z"/></g></svg>');
       --glass: rgba(255,255,255,0.55);
-      --shadow-1: rgba(14,165,164,0.08);
-      --danger: #dc2626;
-      --success: #16a34a;
-      --gauge-bg: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,247,243,0.85));
-      --btn-focus: 0 8px 30px rgba(14,165,164,0.14);
+      --shadow-1: rgba(80,50,20,0.06);
+      --danger: #9a2b2b;
+      --success: #2f7a3f;
+      --gauge-bg: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,245,238,0.96));
+      --btn-focus: 0 10px 30px rgba(138,90,43,0.12);
+      --card-deep-shadow: rgba(20,10,6,0.12);
     }
 
+    /* reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
       * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
     }
 
+    /* perspective for subtle 3D */
     body {
-      font-family: 'Cairo', sans-serif;
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(14,165,164,0.05), transparent 10%),
-                  radial-gradient(900px 450px at 90% 90%, rgba(245,158,11,0.03), transparent 8%),
-                  linear-gradient(135deg, var(--bg-1), var(--bg-2));
-      padding: 40px 15px;
+      perspective: 1100px;
+      /* new elegant font stack: Arabic serif primary, Playfair for Latin, Cairo fallback */
+      font-family: 'Noto Serif Arabic', 'Playfair Display', 'Cairo', serif;
+      background:
+        var(--paper-overlay),
+        radial-gradient(900px 400px at 8% 10%, rgba(139,90,43,0.03), transparent 8%),
+        radial-gradient(700px 350px at 92% 92%, rgba(183,122,43,0.02), transparent 6%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      padding: 48px 18px;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       -webkit-font-smoothing:antialiased;
+      color: var(--muted);
     }
 
     .container {
-      max-width: 720px;
+      max-width: 760px;
       width: 100%;
       background: var(--card);
-      padding: 35px 40px 45px;
-      border-radius: 20px;
-      box-shadow: 0 18px 50px rgba(39,66,86,0.08), 0 4px 12px var(--shadow-1);
+      padding: 36px 42px;
+      border-radius: 18px;
+      box-shadow: 0 30px 80px var(--card-deep-shadow), 0 6px 20px var(--shadow-1);
       position: relative;
-      transition: box-shadow 0.3s ease, transform 0.35s ease;
+      transition: box-shadow 0.35s ease, transform 0.45s ease;
       transform-origin: center;
       opacity: 0;
-      transform: translateY(14px) scale(.995);
+      transform: translateY(18px) scale(.995);
       overflow: visible;
-      border: 1px solid rgba(10,10,10,0.02);
-      backdrop-filter: blur(6px);
+      border: 1px solid rgba(95,60,35,0.06);
+      transform-style: preserve-3d; /* for 3D feel */
+      backface-visibility: hidden;
+      backdrop-filter: blur(4px);
     }
 
     .container.animate-ready {
-      animation: cardIn 600ms cubic-bezier(.2,.9,.3,1) forwards;
+      animation: cardIn 640ms cubic-bezier(.2,.9,.3,1) forwards;
     }
     @keyframes cardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
 
     .container:hover {
-      box-shadow: 0 30px 80px rgba(39,66,86,0.12);
-      transform: translateY(-6px);
+      box-shadow: 0 40px 120px rgba(20,10,6,0.18);
+      transform: translateY(-8px) rotateX(4deg) rotateY(-3deg) translateZ(6px);
     }
 
     h2, h5 {
-      color: #2b3a36;
-      font-weight: 800;
+      color: #3f3126;
+      font-weight: 700;
       letter-spacing: 0.02em;
+      /* ensure headings use the elegant Arabic serif when available */
+      font-family: 'Noto Serif Arabic', 'Playfair Display', serif;
     }
 
     #bmiIntro {
@@ -87,17 +101,19 @@
     }
 
     .form-control, .form-select {
-      border: 2px solid rgba(14,165,164,0.15);
-      background-color: rgba(250,250,250,0.9);
+      border: 2px solid rgba(138,90,43,0.08);
+      background-color: rgba(255,252,247,0.92);
       border-radius: 12px;
       padding: 12px 15px;
       font-size: 1rem;
       transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
-      box-shadow: 0 6px 18px rgba(14,165,164,0.03) inset;
-      color: #2b3a36;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.03) inset;
+      color: #3b2e25;
+      /* keep input text elegant but readable */
+      font-family: 'Cairo', 'Noto Serif Arabic', sans-serif;
     }
 
-    .form-control::placeholder { color: rgba(43,58,54,0.45); }
+    .form-control::placeholder { color: rgba(59,46,37,0.45); }
     .form-control:focus, .form-select:focus {
       border-color: var(--accent);
       box-shadow: var(--btn-focus);
@@ -119,49 +135,57 @@
     }
 
     .btn-primary {
-      background: linear-gradient(180deg, var(--accent), #057d7b);
+      background: linear-gradient(180deg, var(--accent-2), #7b4b23);
       border: none;
       font-weight: 800;
       padding: 12px 26px;
       border-radius: 12px;
       color: #fff;
-      box-shadow: 0 10px 30px rgba(14,165,164,0.16);
+      box-shadow: 0 12px 36px rgba(123,75,35,0.16);
       transition: transform 0.18s ease, box-shadow 0.18s ease, filter .18s;
       position: relative;
       overflow: hidden;
+      transform: translateZ(12px);
+      font-family: 'Playfair Display', 'Cairo', serif;
     }
-    .btn-primary:active { transform: translateY(1px) scale(.998); filter: brightness(.98); }
-    .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(5,125,123,0.22); }
+    .btn-primary:active { transform: translateY(1px) scale(.998) translateZ(8px); filter: brightness(.98); }
+    .btn-primary:hover { transform: translateY(-4px) translateZ(14px); box-shadow: 0 26px 66px rgba(75,40,20,0.22); }
 
     .btn-secondary {
-      background: linear-gradient(180deg, #fff6e6, #f5e5c8);
-      border: 1px solid rgba(90,62,27,0.04);
+      background: linear-gradient(180deg, #fff7ec, #f3e6d3);
+      border: 1px solid rgba(106,71,47,0.06);
       font-weight: 700;
       padding: 12px 26px;
       border-radius: 12px;
-      color: #5a3e1b;
-      box-shadow: 0 6px 18px rgba(217,203,163,0.28);
+      color: #6b4f36;
+      box-shadow: 0 6px 18px rgba(100,68,46,0.06);
       transition: transform 0.18s ease, box-shadow 0.18s ease;
       overflow: hidden;
+      transform: translateZ(8px);
+      font-family: 'Playfair Display', 'Cairo', serif;
     }
-    .btn-secondary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(193,176,139,0.22); }
+    .btn-secondary:hover { transform: translateY(-3px) translateZ(10px); box-shadow: 0 14px 34px rgba(120,85,50,0.12); }
 
+    /* زر تبديل اللغة — مرفوع للأعلى حتى لا يتداخل مع الصف الأول */
     .btn-info {
-      background: linear-gradient(180deg, #334155, #111827);
+      background: linear-gradient(180deg, #3a3640, #111827);
       border: none;
       color: #fff;
       border-radius: 12px;
       font-weight: 700;
       padding: 8px 16px;
       position: absolute;
-      top: 8px; /* moved slightly higher */
-      left: 15px;
-      box-shadow: 0 6px 18px rgba(17,24,39,0.12);
+      top: -18px; /* مرفوع للأعلى */
+      left: 18px;
+      box-shadow: 0 10px 30px rgba(17,24,39,0.14);
       transition: transform 0.18s ease, background-color 0.18s ease;
       cursor: pointer;
+      transform: translateZ(22px);
+      z-index: 40; /* أعلى من محتوى الحاوية لتجنب التداخل البصري */
+      font-family: 'Playfair Display', 'Cairo', serif;
     }
-    .btn-info:active { transform: translateY(1px); }
-    .btn-info:hover { transform: translateY(-2px); }
+    .btn-info:active { transform: translateY(1px) translateZ(18px); }
+    .btn-info:hover { transform: translateY(-2px) translateZ(24px); }
 
     .unit-toggle {
       font-size: 0.95rem;
@@ -170,28 +194,35 @@
       user-select: none;
     }
 
+    /* Note: reduce padding on canvas itself to avoid clientWidth confusion.
+       If you want inner white frame, consider wrapping canvas in a div instead. */
     #bmiGauge {
       width: 100%;
-      max-width: 340px;
+      max-width: 360px;
       height: auto;
       margin: 22px auto 10px;
-      filter: drop-shadow(0 8px 20px rgba(5,125,123,0.08));
       border-radius: 14px;
       background: var(--gauge-bg);
-      padding: 10px;
-      transition: transform .25s ease;
+      /* keep canvas padding 0 so drawing area calculation is simpler */
+      padding: 0;
+      transition: transform .28s ease, box-shadow .28s ease;
       display: block;
+      box-shadow: 0 30px 70px rgba(20,10,6,0.12);
+      transform: rotateX(10deg) translateZ(8px);
+      border: 1px solid rgba(120,80,45,0.06);
+      box-sizing: border-box;
     }
-    #bmiGauge:hover { transform: translateY(-4px) scale(1.01); }
+    #bmiGauge:hover { transform: rotateX(8deg) translateZ(10px) scale(1.01); }
 
     #result {
       font-size: 1.12rem;
       font-weight: 800;
-      color: #243232;
+      color: #3b2e25;
       line-height: 1.5;
       margin-top: 12px;
       min-height: 60px;
       transition: transform .3s ease, opacity .3s ease;
+      font-family: 'Noto Serif Arabic', 'Playfair Display', serif;
     }
 
     #tips {
@@ -202,6 +233,7 @@
       min-height: 45px;
       user-select: none;
       opacity: .95;
+      font-family: 'Noto Serif Arabic', 'Cairo', serif;
     }
 
     /* Ripple effect element */
@@ -231,11 +263,11 @@
       transform: translateY(12px) scale(.98);
       transition: opacity .28s ease, transform .28s ease;
       z-index: 1200;
-      border-left: 6px solid rgba(14,165,164,0.9);
+      border-left: 6px solid rgba(138,90,43,0.9);
     }
     .toast-notice.show { opacity: 1; transform: translateY(0) scale(1); }
 
-    /* Print area (direction & alignment set dynamically; added language-specific rules below) */
+    /* Print area */
     #printContent {
       display:none;
       max-width: 800px;
@@ -254,7 +286,6 @@
     #printImages { display:flex; gap:18px; justify-content:center; align-items:center; margin-top:14px; flex-wrap:wrap; }
     #printImages img { max-width:320px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.08); display:block; margin: 0 auto; }
 
-    /* Language-specific print rules (apply during print) */
     @media print {
       html[lang="ar"] #printContent { direction: rtl !important; text-align: center !important; }
       html[lang="ar"] #printBody { text-align: right !important; }
@@ -264,7 +295,6 @@
       html[lang="en"] #printBody { text-align: left !important; }
       html[lang="en"] #printHeader h2 { text-align: left !important; }
 
-      /* center printContent in the page both horizontally and vertically */
       html, body { height: 100%; margin: 0; padding: 0; }
       body {
         background: #fff !important;
@@ -274,10 +304,8 @@
         -webkit-print-color-adjust: exact;
       }
 
-      /* hide the interactive UI */
       .container, .btn, form, .unit-toggle, .lang-switch, .toast-notice { display: none !important; }
 
-      /* ensure images don't break pages awkwardly */
       #printImages img { page-break-inside: avoid; display:block; margin: 0 auto; }
 
       @page { size: auto; margin: 18mm; }
@@ -287,8 +315,8 @@
     @media (max-width: 520px) {
       .container { padding: 20px; border-radius: 16px; }
       .btn-primary, .btn-secondary { padding: 10px 18px; }
-      #bmiGauge { max-width: 300px; }
-      .btn-info { top: 10px; left: 12px; } /* keep it slightly higher on small screens too */
+      #bmiGauge { max-width: 300px; transform: rotateX(8deg) translateZ(6px); }
+      .btn-info { top: -12px; left: 12px; } /* مراجعة الموضع على الشاشات الصغيرة */
     }
   </style>
 </head>
@@ -430,7 +458,8 @@
     if (printBtn) printBtn.textContent = t.printBtn;
     const unitLabel = document.getElementById('unitLabel');
     if (unitLabel) unitLabel.textContent = t.unitSwitch;
-    document.querySelector('.lang-switch').textContent = currentLang === 'ar' ? 'English' : 'عربي';
+    const langBtn = document.querySelector('.lang-switch');
+    if (langBtn) langBtn.textContent = currentLang === 'ar' ? 'English' : 'عربي';
   }
 
   function toggleLanguage() {
@@ -465,17 +494,37 @@
     clearResults();
   }
 
+  // تحسين clearResults: يوقف الأنيميشن ويعيد رسم المقياس فوراً
   function clearResults() {
     document.getElementById('result').textContent = '';
     document.getElementById('tips').textContent = '';
     document.getElementById('printSection').style.display = 'none';
-    animateGaugeTo(0);
+
+    // أوقف أي أنيميشن جارٍ للمؤشر
+    if (gaugeAnimationFrame) cancelAnimationFrame(gaugeAnimationFrame);
+    gaugeAnimationFrame = null;
+
+    // اضبط الحالة واطلب رسم فوري
+    currentGaugeBmi = 0;
+    const canvas = document.getElementById('bmiGauge');
+    if (canvas) {
+      canvas.style.display = 'block'; // تأكد أنه مرئي
+      // force layout/read before draw
+      void canvas.offsetWidth;
+      drawGauge(0); // رسم فوري لقيمة صفر
+    }
   }
 
+  // تحسين resetForm: إعادة الضبط + رسم فوري + إعادة رسم بعد تأخير قصير (للتأكد من استقرار الـ layout)
   function resetForm() {
     document.getElementById('bmiForm').reset();
     clearResults();
     showToast(currentLang === 'ar' ? 'تمت إعادة ضبط البيانات' : 'Form reset', 1000);
+
+    // أعد رسم المقياس بعد فترة قصيرة للتعامل مع حالات إعادة التدفق (reflow)
+    setTimeout(() => {
+      drawGauge(0);
+    }, 60);
   }
 
   async function calculateBMI() {
@@ -512,7 +561,7 @@
       tips = currentLang === 'ar' ? "حافظ على نمط حياة صحي وتوازن في الغذاء." : "Maintain a healthy lifestyle and balanced diet.";
     } else if (bmi < 29.9) {
       category = currentLang === 'ar' ? "زيادة في الوزن" : "Overweight";
-      tips = currentLang === 'ار' ? "مارس التمارين بانتظام وراقب نظامك الغذائي." : "Exercise regularly and monitor your diet.";
+      tips = currentLang === 'ar' ? "مارس التمارين بانتظام وراقب نظامك الغذائي." : "Exercise regularly and monitor your diet.";
     } else {
       category = currentLang === 'ar' ? "سمنة" : "Obese";
       tips = currentLang === 'ar' ? "استشر مختصًا وابدأ في تحسين نمط حياتك تدريجياً." : "Consult a specialist and start improving your lifestyle gradually.";
@@ -535,12 +584,17 @@
     setTimeout(()=> { calcBtn.disabled = false; }, 600);
   }
 
+  // تحسين animateGaugeTo: يبدأ برسم الإطار الابتدائي فوراً ثم يقوم بالأنيميشن
   function animateGaugeTo(targetBmi) {
-    cancelAnimationFrame(gaugeAnimationFrame);
+    if (gaugeAnimationFrame) cancelAnimationFrame(gaugeAnimationFrame);
     const duration = 700;
     const start = performance.now();
-    const from = currentGaugeBmi;
+    const from = currentGaugeBmi || 0;
     const to = Math.min(Math.max(targetBmi, 0), 40);
+
+    // رسم البداية حتى لا يبدو اللوحة فارغة عند بدء الأنيميشن
+    drawGauge(from);
+
     function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
     function step(now) {
       const elapsed = now - start;
@@ -551,6 +605,7 @@
       if (progress < 1) {
         gaugeAnimationFrame = requestAnimationFrame(step);
       } else {
+        gaugeAnimationFrame = null;
         currentGaugeBmi = to;
       }
     }
@@ -562,32 +617,56 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // make canvas responsive & crisp on high DPR screens
+    // حساب الحجم من bounding rect وخصم الحشوة (padding) للحصول على مساحة المحتوى الفعلية
+    const rect = canvas.getBoundingClientRect();
+    const cs = window.getComputedStyle(canvas);
+    const padLeft = parseFloat(cs.paddingLeft) || 0;
+    const padRight = parseFloat(cs.paddingRight) || 0;
+    const padTop = parseFloat(cs.paddingTop) || 0;
+    const padBottom = parseFloat(cs.paddingBottom) || 0;
+
+    // نستخدم أصغر قيمة عرض/ارتفاع حتى يبقى دائريًا
+    let availableWidth = Math.max(0, rect.width - (padLeft + padRight));
+    let availableHeight = Math.max(0, rect.height - (padTop + padBottom));
+    // إذا rect.height صفر (قد يحصل لأن لم يتم تحديد ارتفاع بعد)، استخدم width
+    if (!availableHeight) availableHeight = availableWidth;
+
+    // سقف منطقي (كما سابقًا) مع fallback
+    let size = Math.min(availableWidth, availableHeight, 360);
+    if (!size || size < 60) {
+      // fallback to parent width or default
+      const parent = canvas.parentElement;
+      const parentWidth = parent ? parent.clientWidth : 300;
+      size = Math.min(parentWidth, 360);
+      if (size < 80) size = 220; // last resort
+    }
+
+    // DPR-aware
     const dpr = window.devicePixelRatio || 1;
-    const size = Math.min(canvas.clientWidth, 340); // base logical size
     canvas.width = Math.round(size * dpr);
     canvas.height = Math.round(size * dpr);
-    canvas.style.height = size + 'px';
+    // set CSS size to match content area
     canvas.style.width = size + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing operations
+    canvas.style.height = size + 'px';
 
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing operations
     ctx.clearRect(0, 0, size, size);
 
-    // background
+    // background (paper-like)
     ctx.beginPath();
     ctx.arc(size / 2, size / 2, size * 0.4, 0, 2 * Math.PI);
     const grad = ctx.createLinearGradient(0,0,size,size);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(1, '#fbfbfb');
+    grad.addColorStop(0, '#fffefb');
+    grad.addColorStop(1, '#fbf6ee');
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // ranges palette
+    // ranges palette (slightly muted earthy)
     const ranges = [
-      { start: 0, end: 18.5, color: '#60a5fa' },  // blue
-      { start: 18.5, end: 24.9, color: '#34d399' }, // green
-      { start: 24.9, end: 29.9, color: '#fbbf24' }, // amber
-      { start: 29.9, end: 40, color: '#fb7185' }    // rose
+      { start: 0, end: 18.5, color: '#7fb3ff' },  // blue
+      { start: 18.5, end: 24.9, color: '#6bbf8f' }, // green
+      { start: 24.9, end: 29.9, color: '#f0c36b' }, // amber
+      { start: 29.9, end: 40, color: '#f1949b' }    // rose
     ];
 
     const startAngle = Math.PI * 0.75;
@@ -611,7 +690,7 @@
       const inner = radius - size * 0.12;
       const outer = radius + size * 0.02;
       ctx.beginPath();
-      ctx.strokeStyle = 'rgba(43,58,54,0.06)';
+      ctx.strokeStyle = 'rgba(59,46,37,0.06)';
       ctx.lineWidth = (i%5===0)?2.6:1.4;
       ctx.moveTo(size/2 + inner*Math.cos(angle), size/2 + inner*Math.sin(angle));
       ctx.lineTo(size/2 + outer*Math.cos(angle), size/2 + outer*Math.sin(angle));
@@ -631,7 +710,7 @@
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(14,165,164,0.98)';
+    ctx.strokeStyle = 'rgba(138,90,43,0.98)';
     ctx.lineWidth = Math.max(4, size * 0.011);
     ctx.lineCap = 'round';
     ctx.moveTo(size/2, size/2);
@@ -639,13 +718,13 @@
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(14,165,164,1)';
+    ctx.fillStyle = 'rgba(138,90,43,1)';
     ctx.arc(size/2, size/2, Math.max(8, size * 0.035), 0, 2*Math.PI);
     ctx.fill();
 
-    // BMI text
-    ctx.font = `bold ${Math.max(18, size * 0.11)}px Cairo`;
-    ctx.fillStyle = '#213331';
+    // BMI text (use Noto Serif Arabic / Playfair fallback)
+    ctx.font = `bold ${Math.max(18, size * 0.11)}px "Noto Serif Arabic", "Playfair Display", serif`;
+    ctx.fillStyle = '#3b2e25';
     ctx.textAlign = 'center';
     ctx.fillText(bmi ? bmi.toFixed(1) : '', size/2, size/2 + Math.max(12, size * 0.05));
   }
@@ -740,14 +819,19 @@
     setTimeout(()=> { document.getElementById('appContainer').classList.add('animate-ready'); }, 80);
     updateLanguage();
     toggleUnits();
-    drawGauge(0);
+    // draw once on load ensuring size is correct
+    setTimeout(() => drawGauge(0), 40);
     initRipples();
     document.getElementById('bmiForm').addEventListener('keydown', function(e){
       if (e.key === 'Enter') { e.preventDefault(); calculateBMI(); }
     });
 
     // handle window resize to redraw gauge responsively
-    window.addEventListener('resize', () => drawGauge(currentGaugeBmi));
+    window.addEventListener('resize', () => {
+      // small debounce
+      if (window._bmiResizeTimeout) clearTimeout(window._bmiResizeTimeout);
+      window._bmiResizeTimeout = setTimeout(()=> drawGauge(currentGaugeBmi), 80);
+    });
   };
 </script>
 
