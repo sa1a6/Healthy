@@ -2,280 +2,329 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>قياس الوزن الصحي</title>
+  <title>حاسبة الوزن الصحي - مطورة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
   
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet" />
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
 
   <style>
+    :root{
+      --bg-1: #f7fbff;
+      --bg-2: #f3f7fb;
+      --card: rgba(255,255,255,0.98);
+      --accent: #0ea5a4;      /* teal */
+      --accent-2: #f59e0b;    /* amber */
+      --muted: #6b5a49;
+      --glass: rgba(255,255,255,0.55);
+      --shadow-1: rgba(14,165,164,0.08);
+      --danger: #dc2626;
+      --success: #16a34a;
+      --gauge-bg: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,247,243,0.85));
+      --btn-focus: 0 8px 30px rgba(14,165,164,0.14);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+    }
+
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(14,165,164,0.05), transparent 10%),
+                  radial-gradient(900px 450px at 90% 90%, rgba(245,158,11,0.03), transparent 8%),
+                  linear-gradient(135deg, var(--bg-1), var(--bg-2));
       padding: 40px 15px;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      -webkit-font-smoothing:antialiased;
     }
 
     .container {
       max-width: 720px;
       width: 100%;
-      background-color: #ffffff;
+      background: var(--card);
       padding: 35px 40px 45px;
       border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 18px 50px rgba(39,66,86,0.08), 0 4px 12px var(--shadow-1);
       position: relative;
-      transition: box-shadow 0.3s ease;
+      transition: box-shadow 0.3s ease, transform 0.35s ease;
+      transform-origin: center;
+      opacity: 0;
+      transform: translateY(14px) scale(.995);
+      overflow: visible;
+      border: 1px solid rgba(10,10,10,0.02);
+      backdrop-filter: blur(6px);
     }
 
+    .container.animate-ready {
+      animation: cardIn 600ms cubic-bezier(.2,.9,.3,1) forwards;
+    }
+    @keyframes cardIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+
     .container:hover {
-      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      box-shadow: 0 30px 80px rgba(39,66,86,0.12);
+      transform: translateY(-6px);
     }
 
     h2, h5 {
-      color: #5a3e1b;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      color: #2b3a36;
+      font-weight: 800;
+      letter-spacing: 0.02em;
     }
 
     #bmiIntro {
       font-weight: 500;
-      color: #6a5d4d;
-      margin-bottom: 25px;
-      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-size: 1.05rem;
+      opacity: .95;
+      transform-origin: right;
     }
 
     .form-control, .form-select {
-      border: 2px solid #bfa87a;
-      background-color: #fcf9f3;
-      border-radius: 10px;
-      padding: 10px 15px;
+      border: 2px solid rgba(14,165,164,0.15);
+      background-color: rgba(250,250,250,0.9);
+      border-radius: 12px;
+      padding: 12px 15px;
       font-size: 1rem;
-      transition: border-color 0.3s ease;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+      box-shadow: 0 6px 18px rgba(14,165,164,0.03) inset;
+      color: #2b3a36;
     }
 
+    .form-control::placeholder { color: rgba(43,58,54,0.45); }
     .form-control:focus, .form-select:focus {
-      border-color: #a07c38;
-      box-shadow: 0 0 8px rgba(160, 124, 56, 0.4);
+      border-color: var(--accent);
+      box-shadow: var(--btn-focus);
       outline: none;
+      transform: translateY(-2px);
     }
+
+    .field-anim { opacity: 0; transform: translateY(8px); }
+    .container.animate-ready .field-anim { animation: fieldIn 420ms forwards ease; }
+    .container.animate-ready .field-anim:nth-child(1) { animation-delay: 120ms; }
+    .container.animate-ready .field-anim:nth-child(2) { animation-delay: 160ms; }
+    .container.animate-ready .field-anim:nth-child(3) { animation-delay: 200ms; }
+    @keyframes fieldIn { to { opacity: 1; transform: translateY(0);} }
 
     label > input[type="checkbox"] {
       margin-left: 8px;
-      transform: scale(1.2);
+      transform: scale(1.18);
       cursor: pointer;
     }
 
     .btn-primary {
-      background-color: #a67c52;
+      background: linear-gradient(180deg, var(--accent), #057d7b);
       border: none;
-      font-weight: 600;
-      padding: 12px 25px;
+      font-weight: 800;
+      padding: 12px 26px;
       border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(166, 124, 82, 0.4);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(14,165,164,0.16);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter .18s;
+      position: relative;
+      overflow: hidden;
     }
-
-    .btn-primary:hover {
-      background-color: #8d6744;
-      box-shadow: 0 8px 20px rgba(141, 103, 68, 0.6);
-    }
+    .btn-primary:active { transform: translateY(1px) scale(.998); filter: brightness(.98); }
+    .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(5,125,123,0.22); }
 
     .btn-secondary {
-      background-color: #d9cba3;
-      border: none;
-      font-weight: 600;
-      padding: 12px 25px;
+      background: linear-gradient(180deg, #fff6e6, #f5e5c8);
+      border: 1px solid rgba(90,62,27,0.04);
+      font-weight: 700;
+      padding: 12px 26px;
       border-radius: 12px;
       color: #5a3e1b;
-      box-shadow: 0 4px 10px rgba(217, 203, 163, 0.4);
-      transition: background-color 0.3s ease;
+      box-shadow: 0 6px 18px rgba(217,203,163,0.28);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      overflow: hidden;
     }
-
-    .btn-secondary:hover {
-      background-color: #c1b08b;
-      color: #482f0c;
-    }
+    .btn-secondary:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(193,176,139,0.22); }
 
     .btn-info {
-      background-color: #6c757d;
+      background: linear-gradient(180deg, #334155, #111827);
       border: none;
+      color: #fff;
       border-radius: 12px;
-      font-weight: 600;
-      padding: 7px 15px;
+      font-weight: 700;
+      padding: 8px 16px;
       position: absolute;
       top: 15px;
       left: 15px;
-      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
-      transition: background-color 0.3s ease;
+      box-shadow: 0 6px 18px rgba(17,24,39,0.12);
+      transition: transform 0.18s ease, background-color 0.18s ease;
       cursor: pointer;
     }
-
-    .btn-info:hover {
-      background-color: #565e63;
-    }
-
-    .btn-success {
-      background-color: #388e3c;
-      border: none;
-      font-weight: 600;
-      padding: 12px 25px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(56, 142, 60, 0.4);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-
-    .btn-success:hover {
-      background-color: #2e7030;
-      box-shadow: 0 8px 20px rgba(46, 112, 48, 0.6);
-    }
-
-    .btn-warning {
-      background-color: #fbc02d;
-      border: none;
-      color: #333;
-      font-weight: 600;
-      padding: 12px 25px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(251, 192, 45, 0.4);
-      transition: background-color 0.3s ease, color 0.3s ease;
-      cursor: default;
-      user-select: none;
-    }
-
-    .btn-warning:hover {
-      background-color: #c79800;
-      color: #fff;
-    }
+    .btn-info:active { transform: translateY(1px); }
+    .btn-info:hover { transform: translateY(-2px); }
 
     .unit-toggle {
-      font-size: 0.9rem;
-      margin-bottom: 15px;
-      color: #6a5d4d;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: var(--muted);
       user-select: none;
     }
 
     #bmiGauge {
       width: 100%;
-      max-width: 320px;
-      margin: 25px auto 15px;
-      filter: drop-shadow(0 3px 6px rgba(134, 78, 45, 0.25));
+      max-width: 340px;
+      height: auto;
+      margin: 22px auto 10px;
+      filter: drop-shadow(0 8px 20px rgba(5,125,123,0.08));
+      border-radius: 14px;
+      background: var(--gauge-bg);
+      padding: 10px;
+      transition: transform .25s ease;
+      display: block;
     }
+    #bmiGauge:hover { transform: translateY(-4px) scale(1.01); }
 
     #result {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: #5a3e1b;
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #243232;
       line-height: 1.5;
-      margin-top: 18px;
+      margin-top: 12px;
       min-height: 60px;
+      transition: transform .3s ease, opacity .3s ease;
     }
 
     #tips {
       font-size: 1rem;
-      color: #6a5d4d;
-      font-weight: 500;
-      margin-top: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 10px;
       min-height: 45px;
       user-select: none;
+      opacity: .95;
     }
 
-    canvas#lineChart {
-      max-width: 100%;
-      height: auto;
-      margin-top: 35px;
-      border-radius: 15px;
-      background: #f9f6f1;
-      padding: 15px;
-      box-shadow: inset 0 0 15px rgba(166, 124, 82, 0.1);
+    /* Ripple effect element */
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      pointer-events: none;
+      opacity: .6;
+      animation: ripple 600ms linear;
+      background-color: rgba(255,255,255,0.25);
+      mix-blend-mode: screen;
     }
+    @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-    .d-flex.justify-content-center.gap-3.mt-3 button {
-      min-width: 140px;
+    .toast-notice {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,247,243,0.98));
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(15,23,42,0.12);
+      color: #123431;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(12px) scale(.98);
+      transition: opacity .28s ease, transform .28s ease;
+      z-index: 1200;
+      border-left: 6px solid rgba(14,165,164,0.9);
     }
+    .toast-notice.show { opacity: 1; transform: translateY(0) scale(1); }
 
-    /* الطباعة */
+    /* Print area (direction & alignment set dynamically; added language-specific rules below) */
+    #printContent {
+      display:none;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      color: #5a3e1b;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    #printBody { margin-top: 8px; color: #3f2e20; font-weight:700; }
+
+    #printHeader { display:flex; align-items:center; gap:16px; margin-bottom:10px; justify-content:center; }
+    #printHeader img { width:68px; height:68px; border-radius:10px; object-fit:cover; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+    #printImages { display:flex; gap:18px; justify-content:center; align-items:center; margin-top:14px; flex-wrap:wrap; }
+    #printImages img { max-width:320px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.08); display:block; margin: 0 auto; }
+
+    /* Language-specific print rules (apply during print) */
     @media print {
+      html[lang="ar"] #printContent { direction: rtl !important; text-align: center !important; }
+      html[lang="ar"] #printBody { text-align: right !important; }
+      html[lang="ar"] #printHeader h2 { text-align: center !important; }
+
+      html[lang="en"] #printContent { direction: ltr !important; text-align: left !important; }
+      html[lang="en"] #printBody { text-align: left !important; }
+      html[lang="en"] #printHeader h2 { text-align: left !important; }
+
+      /* center printContent in the page both horizontally and vertically */
+      html, body { height: 100%; margin: 0; padding: 0; }
       body {
         background: #fff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        direction: ltr !important;
-        font-family: 'Cairo', sans-serif !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        -webkit-print-color-adjust: exact;
       }
-      .container, .btn, form, canvas, .unit-toggle, .lang-switch {
-        display: none !important;
-      }
-      #printContent {
-        display: block !important;
-        direction: rtl !important;
-        text-align: center;
-        margin: 40px auto;
-        font-weight: 600;
-        color: #5a3e1b;
-      }
-      #printContent h2 {
-        margin-bottom: 25px;
-        font-weight: 800;
-      }
-      #printContent p {
-        margin: 8px 0;
-        font-size: 1.1rem;
-        font-weight: 500;
-      }
-      #printGauge {
-        margin-top: 30px;
-        max-width: 250px;
-        max-height: 250px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-      }
+
+      /* hide the interactive UI */
+      .container, .btn, form, .unit-toggle, .lang-switch, .toast-notice { display: none !important; }
+
+      /* ensure images don't break pages awkwardly */
+      #printImages img { page-break-inside: avoid; display:block; margin: 0 auto; }
+
+      @page { size: auto; margin: 18mm; }
+    }
+
+    /* small responsive tweaks */
+    @media (max-width: 520px) {
+      .container { padding: 20px; border-radius: 16px; }
+      .btn-primary, .btn-secondary { padding: 10px 18px; }
+      #bmiGauge { max-width: 300px; }
     }
   </style>
 </head>
 <body>
 
-<div class="container text-center" role="main" aria-label="قياس الوزن الصحي">
+<div class="container text-center" role="main" aria-label="حاسبة الوزن الصحي" id="appContainer">
   <button class="btn btn-info lang-switch" onclick="toggleLanguage()" aria-label="تبديل اللغة">English</button>
 
-  <h2 id="title">قياس الوزن الصحي</h2>
+  <h2 id="title">حاسبة الوزن الصحي</h2>
   <p class="text-muted" id="bmiIntro">مؤشر كتلة الجسم هو مقياس عام لتقييم الوزن نسبةً إلى الطول.</p>
 
   <!-- وحدة القياس -->
   <div class="unit-toggle text-end" aria-label="تبديل وحدة القياس">
-    <label><input type="checkbox" id="unitSwitch" onchange="toggleUnits()"> استخدام إنش/رطل</label>
+    <label><input type="checkbox" id="unitSwitch" onchange="toggleUnits()"> <span id="unitLabel">استخدام إنش/رطل</span></label>
   </div>
 
   <form id="bmiForm" onsubmit="return false;" novalidate>
-    <div class="mb-3"><input type="text" class="form-control" id="name" placeholder="ادخل اسمك" required aria-required="true" aria-label="اسم المستخدم" /></div>
-    <div class="mb-3"><input type="number" class="form-control" id="age" placeholder="العمر" required aria-required="true" aria-label="العمر" /></div>
-    <div class="mb-3">
+    <div class="mb-3 field-anim"><input type="text" class="form-control" id="name" placeholder="ادخل اسمك" required aria-required="true" aria-label="اسم المستخدم" /></div>
+    <div class="mb-3 field-anim"><input type="number" class="form-control" id="age" placeholder="العمر" required aria-required="true" aria-label="العمر" /></div>
+    <div class="mb-3 field-anim">
+      <!-- language-independent values for gender -->
       <select class="form-select" id="gender" required aria-required="true" aria-label="الجنس">
         <option value="" disabled selected>اختر الجنس</option>
-        <option value="ذكر">ذكر</option>
-        <option value="أنثى">أنثى</option>
+        <option value="male">ذكر</option>
+        <option value="female">أنثى</option>
       </select>
     </div>
-    <div class="mb-3"><input type="number" class="form-control" id="height" placeholder="الطول (سم)" required aria-required="true" aria-label="الطول" /></div>
-    <div class="mb-3"><input type="number" class="form-control" id="weight" placeholder="الوزن (كجم)" required aria-required="true" aria-label="الوزن" /></div>
+    <div class="mb-3 field-anim"><input type="number" class="form-control" id="height" placeholder="الطول (سم)" required aria-required="true" aria-label="الطول" /></div>
+    <div class="mb-3 field-anim"><input type="number" class="form-control" id="weight" placeholder="الوزن (كجم)" required aria-required="true" aria-label="الوزن" /></div>
 
-    <div class="d-flex justify-content-center gap-3 mb-4">
-      <button class="btn btn-primary" onclick="calculateBMI()" id="calcBtn" aria-label="احسب مؤشر كتلة الجسم">احسب</button>
-      <button class="btn btn-secondary" onclick="resetForm()" id="resetBtn" aria-label="إعادة تعيين النموذج">بيانات جديدة</button>
+    <div class="d-flex justify-content-center gap-3 mb-4 field-anim">
+      <button type="button" class="btn btn-primary ripple" onclick="calculateBMI()" id="calcBtn" aria-label="احسب مؤشر كتلة الجسم">احسب</button>
+      <button type="button" class="btn btn-secondary ripple" onclick="resetForm()" id="resetBtn" aria-label="إعادة تعيين النموذج">بيانات جديدة</button>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-3" id="printSection" style="display:none;">
-      <button type="button" class="btn btn-success" onclick="printResults()" aria-label="طباعة النتائج">طباعة النتائج</button>
+      <button type="button" class="btn btn-success ripple" onclick="printResults()" aria-label="طباعة النتائج">طباعة النتائج</button>
     </div>
   </form>
 
@@ -283,26 +332,42 @@
   <canvas id="bmiGauge" aria-label="مخطط مؤشر كتلة الجسم" role="img"></canvas>
 
   <div id="tips" class="mt-3 text-start" aria-live="polite" aria-atomic="true"></div>
-
-  <h5 class="mt-5" id="chartLabel">تاريخ مؤشر BMI</h5>
-  <canvas id="lineChart" aria-label="مخطط تاريخ مؤشر كتلة الجسم" role="img"></canvas>
 </div>
 
-<!-- منطقة مخصصة للطباعه -->
-<div id="printContent" style="display:none;">
-  <h2 id="printTitle"></h2>
-  <div id="printResult" style="font-size:1.2rem; margin: 10px 0;"></div>
-  <p id="printTips" style="color:#6a5d4d; font-weight:500; margin-bottom: 15px;"></p>
-  <canvas id="printGauge" width="250" height="250"></canvas>
+<!-- Toast -->
+<div id="toast" class="toast-notice" role="status" aria-live="polite" aria-atomic="true" style="display:none;"></div>
+
+<!-- Print area (centered on page) -->
+<div id="printContent" aria-hidden="true">
+  <div id="printHeader">
+    <div>
+      <h2 id="printTitle">نتائج صحية</h2>
+      <div style="font-size:14px; color:#6a5d4d; font-weight:600;" id="printMeta"></div>
+    </div>
+  </div>
+
+  <div id="printBody">
+    <p id="printResult" style="font-size:18px;"></p>
+    <p id="printTips"></p>
+  </div>
+
+  <div id="printImages" aria-hidden="true">
+    <img id="printGaugeImg" alt="مؤشر BMI" style="display:none;">
+  </div>
+
+  <div style="margin-top:18px; text-align:center; color:#7a6a58; font-weight:700;">
+    <span>Generated by Healthy Weight Calculator</span>
+  </div>
 </div>
 
 <script>
   let currentLang = 'ar';
-  let bmiHistory = JSON.parse(localStorage.getItem('bmiHistory')) || [];
+  let currentGaugeBmi = 0;
+  let gaugeAnimationFrame = null;
 
   const translations = {
     ar: {
-      title: "قياس الوزن الصحي",
+      title: "حاسبة الوزن الصحي",
       bmiIntro: "مؤشر كتلة الجسم هو مقياس عام لتقييم الوزن نسبةً إلى الطول.",
       namePlaceholder: "ادخل اسمك",
       agePlaceholder: "العمر",
@@ -318,10 +383,7 @@
       bmiResult: "مؤشر كتلة الجسم الخاص بك هو: ",
       bmiCategory: "تصنيف الوزن: ",
       tipsTitle: "نصائح:",
-      genderLabel: "الجنس",
-      ageLabel: "العمر",
-      nameLabel: "الاسم",
-      chartLabel: "تاريخ مؤشر BMI"
+      saved: "تمت العملية"
     },
     en: {
       title: "Healthy Weight Calculator",
@@ -340,50 +402,55 @@
       bmiResult: "Your BMI is: ",
       bmiCategory: "Weight Category: ",
       tipsTitle: "Tips:",
-      genderLabel: "Gender",
-      ageLabel: "Age",
-      nameLabel: "Name",
-      chartLabel: "BMI History"
+      saved: "Done"
     }
   };
 
-  // تحديث نصوص الواجهة حسب اللغة
   function updateLanguage() {
     const t = translations[currentLang];
     document.getElementById('title').textContent = t.title;
     document.getElementById('bmiIntro').textContent = t.bmiIntro;
     document.getElementById('name').placeholder = t.namePlaceholder;
     document.getElementById('age').placeholder = t.agePlaceholder;
-    document.getElementById('gender').options[0].text = t.genderPlaceholder;
-    document.getElementById('gender').options[1].text = t.male;
-    document.getElementById('gender').options[2].text = t.female;
+
+    // update displayed text for gender options (values remain language-independent)
+    const genderSelect = document.getElementById('gender');
+    if (genderSelect && genderSelect.options && genderSelect.options.length >= 3) {
+      genderSelect.options[0].text = t.genderPlaceholder;
+      genderSelect.options[1].text = t.male;
+      genderSelect.options[2].text = t.female;
+    }
+
     document.getElementById('height').placeholder = t.heightPlaceholder;
     document.getElementById('weight').placeholder = t.weightPlaceholder;
     document.getElementById('calcBtn').textContent = t.calcBtn;
     document.getElementById('resetBtn').textContent = t.resetBtn;
-    document.querySelector('.unit-toggle label').childNodes[1].nodeValue = ' ' + t.unitSwitch;
-   document.querySelector('#printSection button').textContent = t.printBtn;
+    const printBtn = document.querySelector('#printSection button');
+    if (printBtn) printBtn.textContent = t.printBtn;
+    const unitLabel = document.getElementById('unitLabel');
+    if (unitLabel) unitLabel.textContent = t.unitSwitch;
     document.querySelector('.lang-switch').textContent = currentLang === 'ar' ? 'English' : 'عربي';
-    document.getElementById('chartLabel').textContent = t.chartLabel;
-    if (bmiHistory.length > 0) {
-      updateChart();
-    }
   }
 
-  // تبديل اللغة
   function toggleLanguage() {
     currentLang = currentLang === 'ar' ? 'en' : 'ar';
     document.documentElement.lang = currentLang;
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-    updateLanguage();
+    const app = document.getElementById('appContainer');
+    app.style.transition = 'transform .45s cubic-bezier(.2,.9,.3,1), opacity .35s';
+    app.style.transform = 'rotateY(12deg) translateY(-6px)';
+    app.style.opacity = '0.92';
+    setTimeout(() => {
+      updateLanguage();
+      app.style.transform = 'rotateY(0deg) translateY(0)';
+      app.style.opacity = '1';
+    }, 180);
   }
 
-  // تغيير وحدات القياس
   function toggleUnits() {
     const useImperial = document.getElementById('unitSwitch').checked;
     const heightInput = document.getElementById('height');
     const weightInput = document.getElementById('weight');
-
     if (useImperial) {
       heightInput.placeholder = currentLang === 'ar' ? "الطول (إنش)" : "Height (inch)";
       weightInput.placeholder = currentLang === 'ar' ? "الوزن (رطل)" : "Weight (lbs)";
@@ -391,57 +458,51 @@
       heightInput.placeholder = currentLang === 'ar' ? "الطول (سم)" : "Height (cm)";
       weightInput.placeholder = currentLang === 'ar' ? "الوزن (كجم)" : "Weight (kg)";
     }
-
+    // clear inputs for clarity when switching units
     heightInput.value = '';
     weightInput.value = '';
     clearResults();
   }
 
-  // تنظيف النتائج
   function clearResults() {
     document.getElementById('result').textContent = '';
     document.getElementById('tips').textContent = '';
     document.getElementById('printSection').style.display = 'none';
-    drawGauge(0);
+    animateGaugeTo(0);
   }
 
-  // إعادة تعيين النموذج
   function resetForm() {
     document.getElementById('bmiForm').reset();
     clearResults();
+    showToast(currentLang === 'ar' ? 'تمت إعادة ضبط البيانات' : 'Form reset', 1000);
   }
 
-  // حساب BMI
-  function calculateBMI() {
+  async function calculateBMI() {
     const name = document.getElementById('name').value.trim();
     const age = parseInt(document.getElementById('age').value);
-    const gender = document.getElementById('gender').value;
+    const genderVal = document.getElementById('gender').value; // 'male' | 'female' | ''
     let height = parseFloat(document.getElementById('height').value);
     let weight = parseFloat(document.getElementById('weight').value);
     const useImperial = document.getElementById('unitSwitch').checked;
 
     if (!name) { alert(currentLang === 'ar' ? "الرجاء إدخال الاسم." : "Please enter your name."); return; }
     if (isNaN(age) || age < 1 || age > 120) { alert(currentLang === 'ar' ? "الرجاء إدخال عمر صحيح بين 1 و 120." : "Please enter a valid age between 1 and 120."); return; }
-    if (!gender) { alert(currentLang === 'ar' ? "الرجاء اختيار الجنس." : "Please select gender."); return; }
+    if (!genderVal) { alert(currentLang === 'ar' ? "الرجاء اختيار الجنس." : "Please select gender."); return; }
     if (isNaN(height) || height <= 0) { alert(currentLang === 'ar' ? "الرجاء إدخال الطول بشكل صحيح." : "Please enter a valid height."); return; }
     if (isNaN(weight) || weight <= 0) { alert(currentLang === 'ar' ? "الرجاء إدخال الوزن بشكل صحيح." : "Please enter a valid weight."); return; }
 
-    // تحويل الوحدات إن لزم
     if (useImperial) {
-      height = height * 2.54; // إنش إلى سم
-      weight = weight * 0.453592; // رطل إلى كجم
+      height = height * 2.54;
+      weight = weight * 0.453592;
     }
 
     const heightM = height / 100;
     const bmi = weight / (heightM * heightM);
-    const bmiRounded = bmi.toFixed(1);
-
+    const bmiRounded = parseFloat(bmi.toFixed(1));
     const t = translations[currentLang];
 
-    // تحديد التصنيف
     let category = '';
     let tips = '';
-
     if (bmi < 18.5) {
       category = currentLang === 'ar' ? "نقص في الوزن" : "Underweight";
       tips = currentLang === 'ar' ? "تناول المزيد من الطعام الصحي وزيادة السعرات الحرارية تدريجياً." : "Eat more healthy foods and gradually increase calories.";
@@ -456,255 +517,238 @@
       tips = currentLang === 'ar' ? "استشر مختصًا وابدأ في تحسين نمط حياتك تدريجياً." : "Consult a specialist and start improving your lifestyle gradually.";
     }
 
-    // عرض النتائج
-    document.getElementById('result').innerHTML =
-      `${t.bmiResult}<span style="color:#a67c52; font-weight:700;">${bmiRounded}</span><br>${t.bmiCategory}<span style="color:#b35624;">${category}</span>`;
+    const calcBtn = document.getElementById('calcBtn');
+    calcBtn.disabled = true;
+    calcBtn.animate([{ transform: 'scale(1)' }, { transform: 'scale(.98)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' });
 
-    document.getElementById('tips').textContent = tips;
+    animateGaugeTo(bmiRounded);
 
-    document.getElementById('printSection').style.display = 'flex';
+    setTimeout(() => {
+      document.getElementById('result').innerHTML =
+        `${t.bmiResult}<span style="color:var(--accent); font-weight:800;">${bmiRounded.toFixed(1)}</span><br>${t.bmiCategory}<span style="color:var(--accent-2); font-weight:800;">${category}</span>`;
+      document.getElementById('tips').textContent = tips;
+      document.getElementById('printSection').style.display = 'flex';
+    }, 260);
 
-    // تحديث المخطط الدائري
-    drawGauge(bmi);
-
-    // حفظ البيانات في التاريخ
-    addToHistory({ date: new Date().toISOString(), bmi: bmiRounded, name, age, gender, category, tips });
-
-    // تحديث مخطط التاريخ
-    updateChart();
+    showToast(t.saved);
+    setTimeout(()=> { calcBtn.disabled = false; }, 600);
   }
 
-  // إضافة إلى سجل التاريخ
-  function addToHistory(entry) {
-    bmiHistory.push(entry);
-    if (bmiHistory.length > 30) bmiHistory.shift();
-    localStorage.setItem('bmiHistory', JSON.stringify(bmiHistory));
+  function animateGaugeTo(targetBmi) {
+    cancelAnimationFrame(gaugeAnimationFrame);
+    const duration = 700;
+    const start = performance.now();
+    const from = currentGaugeBmi;
+    const to = Math.min(Math.max(targetBmi, 0), 40);
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      currentGaugeBmi = from + (to - from) * eased;
+      drawGauge(currentGaugeBmi);
+      if (progress < 1) {
+        gaugeAnimationFrame = requestAnimationFrame(step);
+      } else {
+        currentGaugeBmi = to;
+      }
+    }
+    gaugeAnimationFrame = requestAnimationFrame(step);
   }
 
-  // رسم مخطط مؤشر BMI دائري بسيط
   function drawGauge(bmi) {
     const canvas = document.getElementById('bmiGauge');
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const width = canvas.width = 320;
-    const height = canvas.height = 320;
 
-    ctx.clearRect(0, 0, width, height);
+    // make canvas responsive & crisp on high DPR screens
+    const dpr = window.devicePixelRatio || 1;
+    const size = Math.min(canvas.clientWidth, 340); // base logical size
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    canvas.style.height = size + 'px';
+    canvas.style.width = size + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing operations
 
-    // دائرة خلفية
+    ctx.clearRect(0, 0, size, size);
+
+    // background
     ctx.beginPath();
-    ctx.arc(width / 2, height / 2, 130, 0, 2 * Math.PI);
-    ctx.fillStyle = '#f0ebe4';
+    ctx.arc(size / 2, size / 2, size * 0.4, 0, 2 * Math.PI);
+    const grad = ctx.createLinearGradient(0,0,size,size);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(1, '#fbfbfb');
+    ctx.fillStyle = grad;
     ctx.fill();
 
-    // نطاقات التصنيف
+    // ranges palette
     const ranges = [
-      { start: 0, end: 18.5, color: '#f1c40f' },
-      { start: 18.5, end: 24.9, color: '#27ae60' },
-      { start: 24.9, end: 29.9, color: '#e67e22' },
-      { start: 29.9, end: 40, color: '#c0392b' }
-    ];
-
-    const startAngle = Math.PI * 0.75;  // 135 درجة
-    const totalAngle = Math.PI * 1.5;   // 270 درجة
-
-    // رسم الأجزاء اللونية للمؤشر
-    ranges.forEach(range => {
-      let fromAngle = startAngle + totalAngle * (range.start / 40);
-      let toAngle = startAngle + totalAngle * (range.end / 40);
-      ctx.beginPath();
-      ctx.strokeStyle = range.color;
-      ctx.lineWidth = 25;
-      ctx.arc(width / 2, height / 2, 130, fromAngle, toAngle);
-      ctx.stroke();
-    });
-
-    // مؤشر BMI
-    const clampedBmi = Math.min(Math.max(bmi, 0), 40);
-    const bmiAngle = startAngle + totalAngle * (clampedBmi / 40);
-
-    // عقرب المؤشر
-    ctx.beginPath();
-    ctx.strokeStyle = '#a67c52';
-    ctx.lineWidth = 4;
-    ctx.moveTo(width / 2, height / 2);
-    const x = width / 2 + 100 * Math.cos(bmiAngle);
-    const y = height / 2 + 100 * Math.sin(bmiAngle);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-
-    // مركز الدائرة
-    ctx.beginPath();
-    ctx.fillStyle = '#a67c52';
-    ctx.arc(width / 2, height / 2, 12, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // نص BMI
-    ctx.font = 'bold 40px Cairo';
-    ctx.fillStyle = '#5a3e1b';
-    ctx.textAlign = 'center';
-    ctx.fillText(bmi ? bmi.toFixed(1) : '', width / 2, height / 2 + 15);
-  }
-
-  // طباعة النتائج
-  function printResults() {
-    const name = document.getElementById('name').value.trim();
-    const age = document.getElementById('age').value.trim();
-    const gender = document.getElementById('gender').value;
-    const resultHTML = document.getElementById('result').innerHTML;
-    const tipsText = document.getElementById('tips').textContent;
-
-    // إعداد منطقة الطباعة
-    const printDiv = document.getElementById('printContent');
-    document.getElementById('printTitle').textContent = currentLang === 'ar' ? `النتائج الصحية لـ ${name}` : `Health Results for ${name}`;
-    document.getElementById('printResult').innerHTML = resultHTML;
-    document.getElementById('printTips').textContent = tipsText;
-
-    // رسم مؤشر BMI للطباعة
-    const printCanvas = document.getElementById('printGauge');
-    printCanvas.width = 250;
-    printCanvas.height = 250;
-    const ctx = printCanvas.getContext('2d');
-
-    // استخدم نفس الرسم الدائري لكن بحجم أصغر
-    const bmiMatch = resultHTML.match(/(\d+\.\d+)/);
-    const bmiValue = bmiMatch ? parseFloat(bmiMatch[1]) : 0;
-
-    // نفس وظيفة drawGauge لكن على الطباعة
-    ctx.clearRect(0, 0, printCanvas.width, printCanvas.height);
-
-    // خلفية
-    ctx.beginPath();
-    ctx.arc(printCanvas.width / 2, printCanvas.height / 2, 100, 0, 2 * Math.PI);
-    ctx.fillStyle = '#f0ebe4';
-    ctx.fill();
-
-    const ranges = [
-      { start: 0, end: 18.5, color: '#f1c40f' },
-      { start: 18.5, end: 24.9, color: '#27ae60' },
-      { start: 24.9, end: 29.9, color: '#e67e22' },
-      { start: 29.9, end: 40, color: '#c0392b' }
+      { start: 0, end: 18.5, color: '#60a5fa' },  // blue
+      { start: 18.5, end: 24.9, color: '#34d399' }, // green
+      { start: 24.9, end: 29.9, color: '#fbbf24' }, // amber
+      { start: 29.9, end: 40, color: '#fb7185' }    // rose
     ];
 
     const startAngle = Math.PI * 0.75;
     const totalAngle = Math.PI * 1.5;
+    const radius = size * 0.44;
 
     ranges.forEach(range => {
       let fromAngle = startAngle + totalAngle * (range.start / 40);
       let toAngle = startAngle + totalAngle * (range.end / 40);
       ctx.beginPath();
       ctx.strokeStyle = range.color;
-      ctx.lineWidth = 20;
-      ctx.arc(printCanvas.width / 2, printCanvas.height / 2, 100, fromAngle, toAngle);
+      ctx.lineWidth = Math.max(12, size * 0.08);
+      ctx.lineCap = 'round';
+      ctx.arc(size / 2, size / 2, radius, fromAngle, toAngle);
       ctx.stroke();
     });
 
-    const clampedBmi = Math.min(Math.max(bmiValue, 0), 40);
+    // ticks
+    for (let i=0;i<=10;i++){
+      const angle = startAngle + totalAngle * (i/10);
+      const inner = radius - size * 0.12;
+      const outer = radius + size * 0.02;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(43,58,54,0.06)';
+      ctx.lineWidth = (i%5===0)?2.6:1.4;
+      ctx.moveTo(size/2 + inner*Math.cos(angle), size/2 + inner*Math.sin(angle));
+      ctx.lineTo(size/2 + outer*Math.cos(angle), size/2 + outer*Math.sin(angle));
+      ctx.stroke();
+    }
+
+    // needle
+    const clampedBmi = Math.min(Math.max(bmi || 0, 0), 40);
     const bmiAngle = startAngle + totalAngle * (clampedBmi / 40);
 
     ctx.beginPath();
-    ctx.strokeStyle = '#a67c52';
-    ctx.lineWidth = 4;
-    ctx.moveTo(printCanvas.width / 2, printCanvas.height / 2);
-    const x = printCanvas.width / 2 + 75 * Math.cos(bmiAngle);
-    const y = printCanvas.height / 2 + 75 * Math.sin(bmiAngle);
-    ctx.lineTo(x, y);
+    ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+    ctx.lineWidth = Math.max(6, size * 0.02);
+    ctx.lineCap = 'round';
+    ctx.moveTo(size/2, size/2);
+    ctx.lineTo(size/2 + (radius * 0.72)*Math.cos(bmiAngle + 0.01), size/2 + (radius * 0.72)*Math.sin(bmiAngle + 0.01));
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.fillStyle = '#a67c52';
-    ctx.arc(printCanvas.width / 2, printCanvas.height / 2, 10, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(14,165,164,0.98)';
+    ctx.lineWidth = Math.max(4, size * 0.011);
+    ctx.lineCap = 'round';
+    ctx.moveTo(size/2, size/2);
+    ctx.lineTo(size/2 + (radius * 0.74)*Math.cos(bmiAngle), size/2 + (radius * 0.74)*Math.sin(bmiAngle));
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(14,165,164,1)';
+    ctx.arc(size/2, size/2, Math.max(8, size * 0.035), 0, 2*Math.PI);
     ctx.fill();
 
-    ctx.font = 'bold 32px Cairo';
-    ctx.fillStyle = '#5a3e1b';
+    // BMI text
+    ctx.font = `bold ${Math.max(18, size * 0.11)}px Cairo`;
+    ctx.fillStyle = '#213331';
     ctx.textAlign = 'center';
-    ctx.fillText(bmiValue ? bmiValue.toFixed(1) : '', printCanvas.width / 2, printCanvas.height / 2 + 10);
+    ctx.fillText(bmi ? bmi.toFixed(1) : '', size/2, size/2 + Math.max(12, size * 0.05));
+  }
+
+  function printResults() {
+    const name = document.getElementById('name').value.trim() || (currentLang==='ar' ? 'المستخدم' : 'User');
+    const age = document.getElementById('age').value.trim();
+    const genderVal = document.getElementById('gender').value || '';
+    const resultHTML = document.getElementById('result').innerHTML;
+    const tipsText = document.getElementById('tips').textContent;
+    const t = translations[currentLang];
+
+    // localized gender text
+    let genderText = '';
+    if (genderVal === 'male') genderText = t.male;
+    else if (genderVal === 'female') genderText = t.female;
+
+    const printDiv = document.getElementById('printContent');
+    const printBody = document.getElementById('printBody');
+    const printHeader = document.getElementById('printHeader');
+
+    document.getElementById('printTitle').textContent = currentLang === 'ar' ? `النتائج الصحية لـ ${name}` : `Health Results for ${name}`;
+    document.getElementById('printMeta').textContent = `${genderText ? (currentLang==='ar' ? 'الجنس: ' : 'Gender: ') + genderText : ''} ${age ? ' • ' + (currentLang==='ar' ? 'العمر: ' : 'Age: ') + age : ''}`;
+    document.getElementById('printResult').innerHTML = resultHTML;
+    document.getElementById('printTips').textContent = tipsText;
+
+    // set print block direction & alignment according to current language (inline, for immediate visual)
+    if (currentLang === 'ar') {
+      printDiv.dir = 'rtl';
+      printDiv.style.textAlign = 'center'; // center block visually
+      printBody.style.textAlign = 'right';
+      const h2 = printHeader.querySelector('h2');
+      if (h2) h2.style.textAlign = 'center';
+    } else {
+      printDiv.dir = 'ltr';
+      printDiv.style.textAlign = 'left';
+      printBody.style.textAlign = 'left';
+      const h2 = printHeader.querySelector('h2');
+      if (h2) h2.style.textAlign = 'left';
+    }
+
+    // capture gauge canvas as image
+    const gaugeCanvas = document.getElementById('bmiGauge');
+    const gaugeImg = document.getElementById('printGaugeImg');
+    try {
+      const gaugeData = gaugeCanvas.toDataURL('image/png');
+      gaugeImg.src = gaugeData;
+      gaugeImg.style.display = 'block';
+    } catch(e) {
+      gaugeImg.style.display = 'none';
+    }
 
     printDiv.style.display = 'block';
-    window.print();
-    printDiv.style.display = 'none';
+    // allow rendering, then print
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => { printDiv.style.display = 'none'; }, 200);
+    }, 260);
   }
 
-  // رسم مخطط الخط لتاريخ BMI
-  let lineChart;
+  function showToast(message, ttl = 1800) {
+    const t = document.getElementById('toast');
+    t.textContent = message;
+    t.style.display = 'block';
+    requestAnimationFrame(()=> t.classList.add('show'));
+    setTimeout(()=> { t.classList.remove('show'); setTimeout(()=> t.style.display='none', 280); }, ttl);
+  }
 
-  function updateChart() {
-    const ctx = document.getElementById('lineChart').getContext('2d');
-
-    const labels = bmiHistory.map(item => {
-      const d = new Date(item.date);
-      return d.toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
+  function initRipples() {
+    document.querySelectorAll('.ripple').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        const rect = btn.getBoundingClientRect();
+        const circle = document.createElement('span');
+        const diameter = Math.max(rect.width, rect.height);
+        const radius = diameter/2;
+        circle.className = 'ripple-effect';
+        circle.style.width = circle.style.height = diameter + 'px';
+        const left = e.clientX - rect.left - radius;
+        const top = e.clientY - rect.top - radius;
+        circle.style.left = left + 'px';
+        circle.style.top = top + 'px';
+        circle.style.backgroundColor = 'rgba(255,255,255,0.22)';
+        btn.appendChild(circle);
+        setTimeout(()=> circle.remove(), 650);
+      });
     });
-
-    const data = bmiHistory.map(item => parseFloat(item.bmi));
-
-    const chartData = {
-      labels,
-      datasets: [{
-        label: translations[currentLang].bmiResult,
-        data,
-        fill: false,
-        borderColor: '#a67c52',
-        backgroundColor: '#a67c52',
-        tension: 0.3,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        pointBackgroundColor: '#b35624',
-      }]
-    };
-
-    const config = {
-      type: 'line',
-      data: chartData,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ctx.parsed.y.toFixed(1)
-            }
-          }
-        },
-        scales: {
-          y: {
-            min: 0,
-            max: 40,
-            ticks: { stepSize: 5 }
-          }
-        }
-      }
-    };
-
-    if (lineChart) {
-      lineChart.data = chartData;
-      lineChart.options = config.options;
-      lineChart.update();
-    } else {
-      lineChart = new Chart(ctx, config);
-    }
   }
 
-  // تهيئة الصفحة عند التحميل
   window.onload = () => {
     document.documentElement.lang = 'ar';
     document.documentElement.dir = 'rtl';
+    setTimeout(()=> { document.getElementById('appContainer').classList.add('animate-ready'); }, 80);
     updateLanguage();
     toggleUnits();
     drawGauge(0);
-    if (bmiHistory.length) updateChart();
+    initRipples();
+    document.getElementById('bmiForm').addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); calculateBMI(); }
+    });
+
+    // handle window resize to redraw gauge responsively
+    window.addEventListener('resize', () => drawGauge(currentGaugeBmi));
   };
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
