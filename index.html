@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>قياس الوزن الصحي</title>
+  <title>حاسبة الوزن الصحي - مطورة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Bootstrap -->
@@ -154,7 +154,7 @@
       font-weight: 700;
       padding: 8px 16px;
       position: absolute;
-      top: 15px;
+      top: 8px; /* moved slightly higher */
       left: 15px;
       box-shadow: 0 6px 18px rgba(17,24,39,0.12);
       transition: transform 0.18s ease, background-color 0.18s ease;
@@ -288,15 +288,16 @@
       .container { padding: 20px; border-radius: 16px; }
       .btn-primary, .btn-secondary { padding: 10px 18px; }
       #bmiGauge { max-width: 300px; }
+      .btn-info { top: 10px; left: 12px; } /* keep it slightly higher on small screens too */
     }
   </style>
 </head>
 <body>
 
-<div class="container text-center" role="main" aria-label="قياس الوزن الصحي" id="appContainer">
+<div class="container text-center" role="main" aria-label="حاسبة الوزن الصحي" id="appContainer">
   <button class="btn btn-info lang-switch" onclick="toggleLanguage()" aria-label="تبديل اللغة">English</button>
 
-  <h2 id="title">قياس الوزن الصحي</h2>
+  <h2 id="title">حاسبة الوزن الصحي</h2>
   <p class="text-muted" id="bmiIntro">مؤشر كتلة الجسم هو مقياس عام لتقييم الوزن نسبةً إلى الطول.</p>
 
   <!-- وحدة القياس -->
@@ -367,7 +368,7 @@
 
   const translations = {
     ar: {
-      title: "قياس الوزن الصحي",
+      title: "حاسبة الوزن الصحي",
       bmiIntro: "مؤشر كتلة الجسم هو مقياس عام لتقييم الوزن نسبةً إلى الطول.",
       namePlaceholder: "ادخل اسمك",
       agePlaceholder: "العمر",
@@ -511,7 +512,7 @@
       tips = currentLang === 'ar' ? "حافظ على نمط حياة صحي وتوازن في الغذاء." : "Maintain a healthy lifestyle and balanced diet.";
     } else if (bmi < 29.9) {
       category = currentLang === 'ar' ? "زيادة في الوزن" : "Overweight";
-      tips = currentLang === 'ar' ? "مارس التمارين بانتظام وراقب نظامك الغذائي." : "Exercise regularly and monitor your diet.";
+      tips = currentLang === 'ار' ? "مارس التمارين بانتظام وراقب نظامك الغذائي." : "Exercise regularly and monitor your diet.";
     } else {
       category = currentLang === 'ar' ? "سمنة" : "Obese";
       tips = currentLang === 'ar' ? "استشر مختصًا وابدأ في تحسين نمط حياتك تدريجياً." : "Consult a specialist and start improving your lifestyle gradually.";
@@ -752,4 +753,3 @@
 
 </body>
 </html>
-
